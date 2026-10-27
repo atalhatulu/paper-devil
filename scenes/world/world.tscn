@@ -1,0 +1,566 @@
+[gd_scene format=3 uid="uid://d2tpdt4kaujrs"]
+
+[ext_resource type="PackedScene" uid="uid://43ij6osjqlvj" path="res://scenes/player/player.tscn" id="1_player"]
+[ext_resource type="PackedScene" path="res://scenes/enemy/ground/enemy_ground_00.tscn" id="2_eg00"]
+[ext_resource type="PackedScene" path="res://scenes/enemy/ground/enemy_ground_01.tscn" id="3_eg01"]
+[ext_resource type="PackedScene" path="res://scenes/enemy/ground/enemy_ground_02.tscn" id="4_eg02"]
+[ext_resource type="PackedScene" path="res://scenes/enemy/ground/enemy_ground_03.tscn" id="5_eg03"]
+[ext_resource type="PackedScene" path="res://scenes/enemy/flying/enemy_flying_01.tscn" id="6_ef01"]
+[ext_resource type="PackedScene" path="res://scenes/enemy/flying/enemy_flying_02.tscn" id="7_ef02"]
+[ext_resource type="PackedScene" uid="uid://blqyak04xfcnc" path="res://scenes/pickups/armor_pickup.tscn" id="9_armor"]
+[ext_resource type="PackedScene" uid="uid://dh5e1m8a4n7qk" path="res://scenes/pickups/health_pickup.tscn" id="9_health"]
+[ext_resource type="Script" uid="uid://cgu4210mi8tqa" path="res://scenes/systems/sound_fx.gd" id="10_sound"]
+[ext_resource type="Script" uid="uid://ce1cinqvaag4k" path="res://scenes/spawner/wave_manager.gd" id="11_wave"]
+[ext_resource type="PackedScene" uid="uid://cx8barremba21" path="res://scenes/props/explosive_barrel.tscn" id="15_barrel"]
+[ext_resource type="PackedScene" uid="uid://dyatorch1122" path="res://scenes/props/wall_torch.tscn" id="16_torch"]
+[ext_resource type="Texture2D" uid="uid://brxyxkna75xkr" path="res://assets/Props/wall_poster.png" id="17_poster"]
+[ext_resource type="Texture2D" uid="uid://c7n8qrp2ca1ag" path="res://assets/Props/floor_skulls.png" id="18_skulls"]
+[ext_resource type="PackedScene" path="res://scenes/props/jump_pad.tscn" id="19_jumppad"]
+[ext_resource type="Texture2D" uid="uid://bs8cg43pgchj5" path="res://assets/Props/snow_tree.png" id="20_tree"]
+[ext_resource type="Texture2D" uid="uid://coff3tuqfyxoc" path="res://assets/Props/snow_bush.png" id="21_bush"]
+[ext_resource type="Texture2D" uid="uid://b7txcoe4pr5xt" path="res://assets/Props/snow_rocks.png" id="22_rocks"]
+[ext_resource type="Texture2D" uid="uid://wqqvu5bvcjs1" path="res://assets/World/tex_ice_ground.png" id="23_iceground"]
+[ext_resource type="Texture2D" uid="uid://bqa1unigfjmyr" path="res://assets/Props/gargoyle_statue.png" id="24_gargoyle"]
+[ext_resource type="Texture2D" uid="uid://bx5excayjgox5" path="res://assets/Props/snow_barricade.png" id="25_barricade"]
+[ext_resource type="Texture2D" uid="uid://dyn20tsgexcpl" path="res://assets/Tiles/tile_dark_bricks.png" id="27_darkbricks"]
+[ext_resource type="Texture2D" uid="uid://dpykmdb1oukkb" path="res://assets/Tiles/tile_snow_bricks.png" id="28_snowbricks"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/pickup_pistol.tscn" id="29_pk_pistol"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/pickup_shotgun.tscn" id="30_pk_shotgun"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/pickup_rocket.tscn" id="31_pk_rocket"]
+[ext_resource type="PackedScene" path="res://scenes/pickups/pickup_keycard_yellow.tscn" id="33_pk_keycard"]
+[ext_resource type="PackedScene" path="res://scenes/props/yellow_gate.tscn" id="34_yellow_gate"]
+[ext_resource type="Script" path="res://scenes/world/world.gd" id="32_world"]
+
+[sub_resource type="NavigationMesh" id="NavMesh_world"]
+agent_height = 1.8
+agent_radius = 0.5
+agent_max_climb = 0.6
+agent_max_slope = 45.0
+geometry_parsed_geometry_type = 1
+
+[sub_resource type="Environment" id="Environment_world"]
+background_mode = 1
+background_color = Color(0.06, 0.09, 0.12, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.18, 0.22, 0.28, 1)
+ambient_light_energy = 0.55
+tonemap_mode = 2
+fog_enabled = true
+fog_light_color = Color(0.08, 0.12, 0.16, 1)
+fog_density = 0.045
+fog_depth_begin = 3.0
+fog_depth_end = 36.0
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
+size = Vector3(80, 1, 80)
+
+[sub_resource type="StandardMaterial3D" id="Mat_Floor"]
+albedo_color = Color(0.9, 0.95, 1, 1)
+albedo_texture = ExtResource("23_iceground")
+uv1_scale = Vector3(12, 12, 12)
+texture_filter = 0
+
+[sub_resource type="StandardMaterial3D" id="Mat_Obstacle"]
+albedo_color = Color(0.75, 0.8, 0.85, 1)
+albedo_texture = ExtResource("28_snowbricks")
+uv1_scale = Vector3(2, 2, 2)
+texture_filter = 0
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_pillar"]
+size = Vector3(1, 1.4, 8)
+
+[sub_resource type="StandardMaterial3D" id="Mat_Tunnel"]
+albedo_color = Color(0.65, 0.7, 0.75, 1)
+albedo_texture = ExtResource("27_darkbricks")
+uv1_scale = Vector3(2.5, 2.5, 2.5)
+texture_filter = 0
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_tunnel_roof"]
+size = Vector3(10, 0.5, 8)
+
+[node name="World" type="Node3D" unique_id=1002182262]
+script = ExtResource("32_world")
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=987112233]
+navigation_mesh = SubResource("NavMesh_world")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1804327584]
+environment = SubResource("Environment_world")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1714668948]
+transform = Transform3D(0.866025, -0.353553, 0.353553, 0, 0.707107, 0.707107, -0.5, -0.612372, 0.612372, 0, 15, 0)
+light_color = Color(0.65, 0.75, 0.9, 1)
+light_energy = 0.32
+shadow_enabled = true
+
+[node name="Map" type="Node3D" parent="." unique_id=2142448068]
+
+[node name="Floor" type="StaticBody3D" parent="Map" unique_id=1064421535]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+collision_mask = 7
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Map/Floor" unique_id=1291726633]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Map/Floor" unique_id=2089524637]
+size = Vector3(80, 1, 80)
+material = SubResource("Mat_Floor")
+
+[node name="Obstacles" type="Node3D" parent="Map" unique_id=2055874458]
+
+[node name="Wall1" type="CSGBox3D" parent="Map/Obstacles" unique_id=595785070]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -40)
+use_collision = true
+size = Vector3(80, 4, 1)
+material = SubResource("Mat_Obstacle")
+
+[node name="Wall2" type="CSGBox3D" parent="Map/Obstacles" unique_id=1842360639]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 40)
+use_collision = true
+size = Vector3(80, 4, 1)
+material = SubResource("Mat_Obstacle")
+
+[node name="Wall3" type="CSGBox3D" parent="Map/Obstacles" unique_id=262938586]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, 2, 0)
+use_collision = true
+size = Vector3(1, 4, 80)
+material = SubResource("Mat_Obstacle")
+
+[node name="Wall4" type="CSGBox3D" parent="Map/Obstacles" unique_id=298126996]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 2, 0)
+use_collision = true
+size = Vector3(1, 4, 80)
+material = SubResource("Mat_Obstacle")
+
+[node name="SlideTunnel" type="StaticBody3D" parent="Map/Obstacles" unique_id=720113361]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
+collision_mask = 7
+
+[node name="PillarLeft" type="CollisionShape3D" parent="Map/Obstacles/SlideTunnel" unique_id=1914124791]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0.7, 0)
+shape = SubResource("BoxShape3D_pillar")
+
+[node name="MeshLeft" type="CSGBox3D" parent="Map/Obstacles/SlideTunnel/PillarLeft" unique_id=1821882860]
+size = Vector3(1, 1.4, 8)
+material = SubResource("Mat_Tunnel")
+
+[node name="PillarRight" type="CollisionShape3D" parent="Map/Obstacles/SlideTunnel" unique_id=731548571]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0.7, 0)
+shape = SubResource("BoxShape3D_pillar")
+
+[node name="MeshRight" type="CSGBox3D" parent="Map/Obstacles/SlideTunnel/PillarRight" unique_id=146538243]
+size = Vector3(1, 1.4, 8)
+material = SubResource("Mat_Tunnel")
+
+[node name="Roof" type="CollisionShape3D" parent="Map/Obstacles/SlideTunnel" unique_id=1598677531]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+shape = SubResource("BoxShape3D_tunnel_roof")
+
+[node name="MeshRoof" type="CSGBox3D" parent="Map/Obstacles/SlideTunnel/Roof" unique_id=1525958135]
+size = Vector3(10, 0.4, 8)
+material = SubResource("Mat_Tunnel")
+
+[node name="Ramp" type="CSGPolygon3D" parent="Map/Obstacles" unique_id=1561122925]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, 10)
+use_collision = true
+polygon = PackedVector2Array(0, 0, 0, 3, 6, 0)
+depth = 6.0
+material = SubResource("Mat_Obstacle")
+
+[node name="PillarCenter" type="CSGBox3D" parent="Map/Obstacles" unique_id=1267610612]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 1.5, 5)
+use_collision = true
+size = Vector3(3, 3, 3)
+material = SubResource("Mat_Obstacle")
+
+[node name="NorthPlatform" type="CSGBox3D" parent="Map/Obstacles" unique_id=199900001]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, -28)
+use_collision = true
+size = Vector3(26, 1, 14)
+material = SubResource("Mat_Floor")
+
+[node name="RampWest" type="CSGPolygon3D" parent="Map/Obstacles" unique_id=199900002]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0, -30.5)
+use_collision = true
+polygon = PackedVector2Array(-8, 0, 0, 4, 0, 0)
+depth = 5.0
+material = SubResource("Mat_Obstacle")
+
+[node name="RampEast" type="CSGPolygon3D" parent="Map/Obstacles" unique_id=199900003]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0, -30.5)
+use_collision = true
+polygon = PackedVector2Array(0, 0, 0, 4, 8, 0)
+depth = 5.0
+material = SubResource("Mat_Obstacle")
+
+[node name="PillarWest" type="CSGBox3D" parent="Map/Obstacles" unique_id=199900004]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 2.5, 0)
+use_collision = true
+size = Vector3(4, 5, 4)
+material = SubResource("Mat_Obstacle")
+
+[node name="PillarEast" type="CSGBox3D" parent="Map/Obstacles" unique_id=199900005]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 2.5, 0)
+use_collision = true
+size = Vector3(4, 5, 4)
+material = SubResource("Mat_Obstacle")
+
+[node name="CoverWallSouth" type="CSGBox3D" parent="Map/Obstacles" unique_id=199900006]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1.25, 14)
+use_collision = true
+size = Vector3(10, 2.5, 1.2)
+material = SubResource("Mat_Obstacle")
+
+[node name="Entities" type="Node3D" parent="." unique_id=1125814731]
+
+[node name="Player" parent="Entities" unique_id=1464542097 instance=ExtResource("1_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 8)
+
+[node name="EnemyGround00_1" parent="Entities" unique_id=1249504255 instance=ExtResource("2_eg00")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0.1, -16)
+
+[node name="EnemyGround00_2" parent="Entities" unique_id=219221817 instance=ExtResource("2_eg00")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0.1, -15)
+
+[node name="EnemyGround01_1" parent="Entities" unique_id=2100837765 instance=ExtResource("3_eg01")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0.1, -10)
+
+[node name="EnemyGround01_2" parent="Entities" unique_id=1276775370 instance=ExtResource("3_eg01")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0.1, -5)
+
+[node name="EnemyGround02_1" parent="Entities" unique_id=1204041782 instance=ExtResource("4_eg02")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.1, -22)
+
+[node name="EnemyGround02_2" parent="Entities" unique_id=1690755529 instance=ExtResource("4_eg02")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0.1, 15)
+
+[node name="EnemyGround03_Tank" parent="Entities" unique_id=1596608358 instance=ExtResource("5_eg03")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -30)
+
+[node name="EnemyFlying01_1" parent="Entities" unique_id=1318025359 instance=ExtResource("6_ef01")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 4.5, -20)
+
+[node name="EnemyFlying01_2" parent="Entities" unique_id=142909023 instance=ExtResource("6_ef01")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 4.5, -24)
+
+[node name="EnemyFlying02_Hunter" parent="Entities" unique_id=16937841 instance=ExtResource("7_ef02")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, -15)
+
+[node name="Pickups" type="Node3D" parent="." unique_id=314159265]
+
+[node name="ArmorPickup_Ramp" parent="Pickups" unique_id=1923520348 instance=ExtResource("9_armor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 3.5, 13)
+
+[node name="ArmorPickup_Tunnel" parent="Pickups" unique_id=922739039 instance=ExtResource("9_armor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -8)
+
+[node name="ArmorPickup_CornerEast" parent="Pickups" unique_id=393209476 instance=ExtResource("9_armor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 0.5, -28)
+
+[node name="ArmorPickup_CornerWest" parent="Pickups" unique_id=2048170545 instance=ExtResource("9_armor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28, 0.5, -28)
+
+[node name="HealthPickup_Center" parent="Pickups" unique_id=393209499 instance=ExtResource("9_health")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.5, 6)
+
+[node name="HealthPickup_TunnelBack" parent="Pickups" unique_id=2048170599 instance=ExtResource("9_health")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 0.5, -12)
+
+[node name="HealthPickup_North" parent="Pickups" unique_id=2048170600 instance=ExtResource("9_health")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -22)
+
+[node name="ArmorPickup_Platform" parent="Pickups" unique_id=199930001 instance=ExtResource("9_armor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5, -28)
+
+[node name="HealthPickup_PillarWest" parent="Pickups" unique_id=199930002 instance=ExtResource("9_health")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.5, 4)
+
+[node name="PickupPistol" parent="Pickups" unique_id=199930003 instance=ExtResource("29_pk_pistol")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 2)
+
+[node name="PickupShotgun" parent="Pickups" unique_id=199930004 instance=ExtResource("30_pk_shotgun")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0.3, 4)
+
+[node name="PickupRocket" parent="Pickups" unique_id=199930005 instance=ExtResource("31_pk_rocket")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.3, -25)
+
+[node name="PickupKeycardYellow" parent="Pickups" unique_id=199930006 instance=ExtResource("33_pk_keycard")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 1.2, 13)
+
+[node name="Props" type="Node3D" parent="." unique_id=444555666]
+
+[node name="SnowParticles" type="CPUParticles3D" parent="Props" unique_id=444555777]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 14, 0)
+amount = 110
+lifetime = 6.0
+preprocess = 3.0
+emission_shape = 3
+emission_box_extents = Vector3(45, 1, 45)
+direction = Vector3(0.1, -1, 0.05)
+spread = 35.0
+gravity = Vector3(0.1, -1.4, 0.05)
+initial_velocity_min = 0.6
+initial_velocity_max = 1.8
+angular_velocity_min = -90.0
+angular_velocity_max = 90.0
+angle_min = -180.0
+angle_max = 180.0
+scale_amount_min = 1.2
+scale_amount_max = 2.8
+color = Color(0.95, 0.98, 1, 0.9)
+
+[node name="SnowTree_1" type="Sprite3D" parent="Props" unique_id=9990001]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 2.5, -12)
+pixel_size = 0.0055
+billboard = 2
+alpha_cut = 1
+texture_filter = 0
+texture = ExtResource("20_tree")
+
+[node name="SnowTree_2" type="Sprite3D" parent="Props" unique_id=9990002]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 2.5, -8)
+pixel_size = 0.0058
+billboard = 2
+alpha_cut = 1
+texture_filter = 0
+texture = ExtResource("20_tree")
+
+[node name="SnowTree_3" type="Sprite3D" parent="Props" unique_id=9990003]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 2.5, 15)
+pixel_size = 0.0055
+billboard = 2
+alpha_cut = 1
+texture_filter = 0
+texture = ExtResource("20_tree")
+
+[node name="SnowTree_4" type="Sprite3D" parent="Props" unique_id=9990004]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 2.5, 18)
+pixel_size = 0.0052
+billboard = 2
+alpha_cut = 1
+texture_filter = 0
+texture = ExtResource("20_tree")
+
+[node name="SnowTree_Platform1" type="Sprite3D" parent="Props" unique_id=9990005]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 6.2, -32)
+pixel_size = 0.0048
+billboard = 2
+alpha_cut = 1
+texture_filter = 0
+texture = ExtResource("20_tree")
+
+[node name="SnowTree_Platform2" type="Sprite3D" parent="Props" unique_id=9990006]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 6.2, -32)
+pixel_size = 0.0048
+billboard = 2
+alpha_cut = 1
+texture_filter = 0
+texture = ExtResource("20_tree")
+
+[node name="SnowBush_1" type="Sprite3D" parent="Props" unique_id=9991001]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.9, -10)
+pixel_size = 0.0045
+billboard = 2
+alpha_cut = 1
+texture_filter = 0
+texture = ExtResource("21_bush")
+
+[node name="SnowBush_2" type="Sprite3D" parent="Props" unique_id=9991002]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0.9, 8)
+pixel_size = 0.0045
+billboard = 2
+alpha_cut = 1
+texture_filter = 0
+texture = ExtResource("21_bush")
+
+[node name="SnowBush_3" type="Sprite3D" parent="Props" unique_id=9991003]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0.9, 14)
+pixel_size = 0.0045
+billboard = 2
+alpha_cut = 1
+texture_filter = 0
+texture = ExtResource("21_bush")
+
+[node name="SnowRocks_1" type="Sprite3D" parent="Props" unique_id=9992001]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.8, -2)
+pixel_size = 0.0045
+billboard = 2
+alpha_cut = 1
+texture_filter = 0
+texture = ExtResource("22_rocks")
+
+[node name="SnowRocks_2" type="Sprite3D" parent="Props" unique_id=9992002]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0.8, -12)
+pixel_size = 0.005
+billboard = 2
+alpha_cut = 1
+texture_filter = 0
+texture = ExtResource("22_rocks")
+
+[node name="SnowRocks_3" type="Sprite3D" parent="Props" unique_id=9992003]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0.8, 22)
+pixel_size = 0.0045
+billboard = 2
+alpha_cut = 1
+texture_filter = 0
+texture = ExtResource("22_rocks")
+
+[node name="Barrel_Center" parent="Props" unique_id=555111001 instance=ExtResource("15_barrel")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, -4)
+
+[node name="Barrel_Ramp" parent="Props" unique_id=555111002 instance=ExtResource("15_barrel")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0, 6)
+
+[node name="Barrel_TunnelEntrance" parent="Props" unique_id=555111003 instance=ExtResource("15_barrel")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0, -8)
+
+[node name="Barrel_NorthPillar" parent="Props" unique_id=555111004 instance=ExtResource("15_barrel")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0, 3)
+
+[node name="Barrel_West" parent="Props" unique_id=555111005 instance=ExtResource("15_barrel")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 0, -15)
+
+[node name="Torch_PillarNorth" parent="Props" unique_id=666111001 instance=ExtResource("16_torch")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 8.4, 2.2, 5)
+
+[node name="Torch_PillarSouth" parent="Props" unique_id=666111002 instance=ExtResource("16_torch")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 11.6, 2.2, 5)
+
+[node name="Torch_TunnelLeft" parent="Props" unique_id=666111003 instance=ExtResource("16_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 1.8, -4)
+
+[node name="Torch_TunnelRight" parent="Props" unique_id=666111004 instance=ExtResource("16_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 1.8, -4)
+
+[node name="Torch_RampTop" parent="Props" unique_id=666111005 instance=ExtResource("16_torch")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -6, 3.8, 10)
+
+[node name="Torch_WallNorth1" parent="Props" unique_id=666111006 instance=ExtResource("16_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 2.2, -39.4)
+
+[node name="Torch_WallNorth2" parent="Props" unique_id=666111007 instance=ExtResource("16_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 2.2, -39.4)
+
+[node name="Torch_WallSouth" parent="Props" unique_id=666111008 instance=ExtResource("16_torch")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 2.2, 39.4)
+
+[node name="JumpPad_Center" parent="Props" unique_id=199910001 instance=ExtResource("19_jumppad")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -14)
+forward_force = 14.0
+
+[node name="Torch_PlatformLeft" parent="Props" unique_id=199920001 instance=ExtResource("16_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 5.2, -34.5)
+
+[node name="Torch_PlatformRight" parent="Props" unique_id=199920002 instance=ExtResource("16_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 5.2, -34.5)
+
+[node name="Torch_PillarWest" parent="Props" unique_id=199920003 instance=ExtResource("16_torch")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -13.8, 3.2, 0)
+
+[node name="Torch_PillarEast" parent="Props" unique_id=199920004 instance=ExtResource("16_torch")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 13.8, 3.2, 0)
+
+[node name="Barrel_Platform1" parent="Props" unique_id=199920005 instance=ExtResource("15_barrel")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, -28)
+
+[node name="Barrel_Platform2" parent="Props" unique_id=199920006 instance=ExtResource("15_barrel")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 4, -28)
+
+[node name="Poster_Pillar" type="Sprite3D" parent="Props" unique_id=777000101]
+transform = Transform3D(0.42, 0, 0, 0, 0.42, 0, 0, 0, 0.42, 10, 1.6, 3.48)
+texture_filter = 0
+texture = ExtResource("17_poster")
+
+[node name="Poster_Tunnel" type="Sprite3D" parent="Props" unique_id=777000102]
+transform = Transform3D(0.38, 0, 0, 0, 0.38, 0, 0, 0, 0.38, 0, 1.1, -12.02)
+texture_filter = 0
+texture = ExtResource("17_poster")
+
+[node name="Skulls_Corner1" type="Sprite3D" parent="Props" unique_id=888000101]
+transform = Transform3D(0.55, 0, 0, 0, 0.55, 0, 0, 0, 0.55, 14, 0.32, -4)
+billboard = 2
+texture_filter = 0
+texture = ExtResource("18_skulls")
+
+[node name="Skulls_Corner2" type="Sprite3D" parent="Props" unique_id=888000102]
+transform = Transform3D(0.65, 0, 0, 0, 0.65, 0, 0, 0, 0.65, -8, 0.35, -18)
+billboard = 2
+texture_filter = 0
+texture = ExtResource("18_skulls")
+
+[node name="Skulls_Tunnel" type="Sprite3D" parent="Props" unique_id=888000103]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 3.5, 0.3, -10)
+billboard = 2
+texture_filter = 0
+texture = ExtResource("18_skulls")
+
+[node name="Gargoyle_Left" type="Sprite3D" parent="Props" unique_id=888000201]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 1.4, -20)
+pixel_size = 0.0055
+billboard = 2
+alpha_cut = 1
+texture_filter = 0
+texture = ExtResource("24_gargoyle")
+
+[node name="Gargoyle_Right" type="Sprite3D" parent="Props" unique_id=888000202]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 1.4, -20)
+pixel_size = 0.0055
+billboard = 2
+alpha_cut = 1
+texture_filter = 0
+texture = ExtResource("24_gargoyle")
+
+[node name="Barricade_Center" type="Sprite3D" parent="Props" unique_id=888000301]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 12)
+pixel_size = 0.0045
+billboard = 2
+alpha_cut = 1
+texture_filter = 0
+texture = ExtResource("25_barricade")
+
+[node name="Barricade_West" type="Sprite3D" parent="Props" unique_id=888000302]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0.9, -4)
+pixel_size = 0.0045
+billboard = 2
+alpha_cut = 1
+texture_filter = 0
+texture = ExtResource("25_barricade")
+
+[node name="SpawnPoints" type="Node3D" parent="." unique_id=999777000]
+
+[node name="Gate_North" type="Marker3D" parent="SpawnPoints" unique_id=999777001]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, -32)
+
+[node name="Gate_South" type="Marker3D" parent="SpawnPoints" unique_id=999777002]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 34)
+
+[node name="Gate_West" type="Marker3D" parent="SpawnPoints" unique_id=999777003]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -34, 0.2, 0)
+
+[node name="Gate_East" type="Marker3D" parent="SpawnPoints" unique_id=999777004]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34, 0.2, 0)
+
+[node name="SoundFX" type="Node" parent="." unique_id=777123456]
+script = ExtResource("10_sound")
+
+[node name="WaveManager" type="Node3D" parent="." unique_id=888123456]
+script = ExtResource("11_wave")
+time_between_waves = 3.5
+
+[node name="YellowGate" parent="." unique_id=888123499 instance=ExtResource("34_yellow_gate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -20.5)
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=959386071]
+
+[node name="HelpLabel" type="Label" parent="UI" unique_id=208637919]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 540.0
+offset_bottom = 260.0
+text = "BOOMER SHOOTER KONTROLLER:
+- Sol Fare Tıkı: Ateş Et / Yumruk Komboları
+- 1: Yumruklar | 2: Tabanca | 3: Pompalı | 4: Roketatar (Tekerlek: Değiştir)
+- V: İnfaz Et (Sersemlemiş düşmanı Doom tarzı ikiye yar ve can/mermi saç!)
+- R: Şarjör Doldur (Ölünce: Yeniden Başla)
+- WASD: Hareket | Boşluk: Zıplama | Shift: Dash | Ctrl: Slide
+- Zıplama Tablası: Basınca yüksek balkona fırlatır!"

@@ -1,0 +1,31 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://nq4odxvermuh" path="res://scenes/pickups/pickup.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/Pickups/keycard_yellow.png" id="2_key"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_pickup"]
+radius = 0.85
+
+[node name="PickupKeycardYellow" type="Area3D" groups=["pickup"]]
+collision_layer = 16
+collision_mask = 2
+script = ExtResource("1_script")
+pickup_type = 6
+is_static_world_item = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+shape = SubResource("SphereShape3D_pickup")
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+transform = Transform3D(0.42, 0, 0, 0, 0.42, 0, 0, 0, 0.42, 0, 0.45, 0)
+billboard = 2
+alpha_cut = 1
+texture_filter = 0
+texture = ExtResource("2_key")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+light_color = Color(1, 0.85, 0.2, 1)
+light_energy = 2.4
+omni_range = 3.5

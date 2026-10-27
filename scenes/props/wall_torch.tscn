@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://dyatorch1122"]
+
+[ext_resource type="Script" path="res://scenes/props/wall_torch.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://dl5bemdvj4mv8" path="res://assets/Props/wall_torch.png" id="2_torch"]
+
+[node name="WallTorch" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+transform = Transform3D(0.42, 0, 0, 0, 0.42, 0, 0, 0, 0.42, 0, 0.3, 0)
+texture_filter = 0
+texture = ExtResource("2_torch")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0.4)
+light_color = Color(1, 0.7, 0.3, 1)
+light_energy = 2.8
+omni_range = 14.0
+omni_attenuation = 1.1

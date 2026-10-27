@@ -1,0 +1,642 @@
+[gd_scene format=3 uid="uid://43ij6osjqlvj"]
+
+[ext_resource type="Script" uid="uid://t7wsacco4ppk" path="res://scenes/player/player.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://dl7e8c8t3m3sq" path="res://assets/Weapons/w_pomp.png" id="2_dovo2"]
+[ext_resource type="Texture2D" uid="uid://bq26uka8ckrhm" path="res://assets/UI/hud_hp_frame.png" id="3_hpframe"]
+[ext_resource type="Texture2D" uid="uid://b003f1wycy737" path="res://assets/UI/hud_hp_fill.png" id="4_hpfill"]
+[ext_resource type="Texture2D" uid="uid://dpdd2p5wfyghm" path="res://assets/UI/hud_ap_frame.png" id="5_apframe"]
+[ext_resource type="Texture2D" uid="uid://dxomjf5fwiqqd" path="res://assets/UI/hud_ap_fill.png" id="6_apfill"]
+[ext_resource type="Texture2D" uid="uid://cw1s3k8mqqd3r" path="res://assets/UI/hud_bar_bg.png" id="7_barbg"]
+[ext_resource type="Texture2D" uid="uid://bkb0ia0b16j4x" path="res://assets/Weapons/muzzle_flash.png" id="8_flash"]
+[ext_resource type="Texture2D" uid="uid://c2nlqugt8yutq" path="res://assets/UI/hud_ammo_card.png" id="9_ammocard"]
+[ext_resource type="Texture2D" uid="uid://cj2bpbi2ihnqo" path="res://assets/Weapons/fist_left.png" id="10_fistl"]
+[ext_resource type="Texture2D" uid="uid://65gpjrr00tmn" path="res://assets/Weapons/fist_right.png" id="11_fistr"]
+[ext_resource type="Shader" uid="uid://5e1w6bipvsre" path="res://scenes/shaders/retro_pixel_dither.gdshader" id="12_retro_shader"]
+[ext_resource type="Texture2D" uid="uid://x3cqhql0pt8g" path="res://assets/UI/hud_face.png" id="13_hudface"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
+radius = 0.4
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_snow"]
+emission_shape = 3
+emission_box_extents = Vector3(18, 10, 18)
+direction = Vector3(0.2, -1, 0.1)
+spread = 20.0
+initial_velocity_min = 2.0
+initial_velocity_max = 4.5
+turbulence_enabled = true
+turbulence_noise_scale = 3.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_flake"]
+shading_mode = 0
+albedo_color = Color(0.92, 0.96, 1, 0.85)
+billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_snow"]
+material = SubResource("StandardMaterial3D_flake")
+size = Vector2(0.08, 0.08)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_retro"]
+shader = ExtResource("12_retro_shader")
+shader_parameter/pixel_size = 2.4
+shader_parameter/color_depth = 24.0
+shader_parameter/dither_strength = 0.55
+
+[sub_resource type="SystemFont" id="SystemFont_je7p5"]
+subpixel_positioning = 0
+
+[sub_resource type="LabelSettings" id="LabelSettings_h17s1"]
+font = SubResource("SystemFont_je7p5")
+font_size = 14
+font_color = Color(0, 0, 0, 1)
+
+[node name="Player" type="CharacterBody3D" unique_id=332364858 groups=["player"]]
+collision_layer = 2
+collision_mask = 5
+script = ExtResource("1_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=254802787]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_player")
+
+[node name="Head" type="Node3D" parent="." unique_id=2014957684]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Head" unique_id=721950010]
+current = true
+fov = 90.0
+
+[node name="MuzzleOmniLight" type="OmniLight3D" parent="Head/Camera3D" unique_id=987111333]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, -0.6)
+visible = false
+light_color = Color(1, 0.75, 0.3, 1)
+light_energy = 3.5
+omni_range = 10.0
+omni_attenuation = 1.4
+
+[node name="SnowParticles" type="GPUParticles3D" parent="Head" unique_id=987111222]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, -4)
+amount = 1200
+lifetime = 5.0
+preprocess = 3.0
+process_material = SubResource("ParticleProcessMaterial_snow")
+draw_pass_1 = SubResource("QuadMesh_snow")
+
+[node name="CeilingCheck" type="RayCast3D" parent="." unique_id=389729205]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+target_position = Vector3(0, 1.2, 0)
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=53720118]
+
+[node name="DamageOverlay" type="ColorRect" parent="UI" unique_id=125911370]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.9, 0.1, 0.1, 0)
+
+[node name="SplatterOverlay" type="ColorRect" parent="UI" unique_id=9812734]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.65, 0.05, 0.08, 0)
+
+[node name="Crosshair" type="ColorRect" parent="UI" unique_id=1213731130]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -3.0
+offset_top = -3.0
+offset_right = 3.0
+offset_bottom = 3.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 1, 1, 0.8)
+
+[node name="HitMarker" type="Label" parent="UI" unique_id=1849182041]
+modulate = Color(1, 1, 1, 0)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.2, 0.2, 1)
+theme_override_font_sizes/font_size = 24
+text = "✕"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="GloryIndicator" type="Label" parent="UI" unique_id=1631161774]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = 35.0
+offset_right = 100.0
+offset_bottom = 70.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.2, 1)
+theme_override_font_sizes/font_size = 22
+text = "[V] İNFAZ ET!"
+horizontal_alignment = 1
+
+[node name="FPSCounter" type="Label" parent="UI" unique_id=188899999]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -160.0
+offset_top = 16.0
+offset_right = -20.0
+offset_bottom = 44.0
+grow_horizontal = 0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 18
+text = "60 FPS"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="ObjectiveNotice" type="Label" parent="UI" unique_id=188899990]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -350.0
+offset_top = 28.0
+offset_right = 350.0
+offset_bottom = 68.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.2, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 20
+text = "HEDEF: Avluyu Temizle ve Batı Tünelini Araştır!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HandContainer" type="Control" parent="UI" unique_id=1102996316]
+layout_mode = 3
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="HandSprite" type="Sprite2D" parent="UI/HandContainer" unique_id=1264373334]
+position = Vector2(0, -70)
+scale = Vector2(0.42, 0.42)
+texture = ExtResource("2_dovo2")
+
+[node name="PistolMuzzle" type="Marker2D" parent="UI/HandContainer/HandSprite" unique_id=1457334779]
+position = Vector2(0, -170)
+
+[node name="ShotgunMuzzle" type="Marker2D" parent="UI/HandContainer/HandSprite" unique_id=868116368]
+position = Vector2(0, -165)
+
+[node name="RocketMuzzle" type="Marker2D" parent="UI/HandContainer/HandSprite" unique_id=868116369]
+position = Vector2(0, -185)
+
+[node name="MuzzleFlash" type="Sprite2D" parent="UI/HandContainer" unique_id=1457334799]
+visible = false
+position = Vector2(0, -220)
+scale = Vector2(0.65, 0.65)
+texture = ExtResource("8_flash")
+
+[node name="FistContainer" type="Control" parent="UI/HandContainer" unique_id=1102996999]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="FistLeft" type="Sprite2D" parent="UI/HandContainer/FistContainer" unique_id=1102996991]
+position = Vector2(-280, -90)
+scale = Vector2(0.52, 0.52)
+texture = ExtResource("10_fistl")
+
+[node name="FistRight" type="Sprite2D" parent="UI/HandContainer/FistContainer" unique_id=1102996992]
+position = Vector2(280, -90)
+scale = Vector2(0.52, 0.52)
+texture = ExtResource("11_fistr")
+
+[node name="RetroPixelFilter" type="ColorRect" parent="UI" unique_id=1102996888]
+material = SubResource("ShaderMaterial_retro")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="BossBarContainer" type="VBoxContainer" parent="UI" unique_id=1010200]
+visible = false
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -220.0
+offset_top = 18.0
+offset_right = 220.0
+offset_bottom = 54.0
+grow_horizontal = 2
+theme_override_constants/separation = 3
+
+[node name="BossNameLabel" type="Label" parent="UI/BossBarContainer" unique_id=1010201]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 14
+text = "[ ====== YETI DEMON ====== ]"
+horizontal_alignment = 1
+
+[node name="BossHealthBar" type="ProgressBar" parent="UI/BossBarContainer" unique_id=1010202]
+custom_minimum_size = Vector2(440, 10)
+layout_mode = 2
+value = 100.0
+show_percentage = false
+
+[node name="HUDLeft" type="VBoxContainer" parent="UI" unique_id=943790764]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 28.0
+offset_top = -140.0
+offset_right = 380.0
+offset_bottom = -20.0
+grow_vertical = 0
+theme_override_constants/separation = 8
+
+[node name="PortraitRow" type="HBoxContainer" parent="UI/HUDLeft" unique_id=1010198]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="PortraitFace" type="TextureRect" parent="UI/HUDLeft/PortraitRow" unique_id=1010199]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+texture = ExtResource("13_hudface")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="YellowKeyBadge" type="Label" parent="UI/HUDLeft/PortraitRow" unique_id=1010200]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.2, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 18
+text = "[🔑 SARI ANAHTAR]"
+vertical_alignment = 1
+
+[node name="HealthBarContainer" type="Control" parent="UI/HUDLeft" unique_id=1010105]
+custom_minimum_size = Vector2(340, 52)
+layout_mode = 2
+
+[node name="HealthBar" type="TextureProgressBar" parent="UI/HUDLeft/HealthBarContainer" unique_id=1010102]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 58.0
+offset_top = 11.0
+offset_right = -70.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 2
+value = 100.0
+nine_patch_stretch = true
+texture_under = ExtResource("7_barbg")
+texture_progress = ExtResource("4_hpfill")
+
+[node name="HealthFrame" type="TextureRect" parent="UI/HUDLeft/HealthBarContainer" unique_id=1010106]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("3_hpframe")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="HealthLabel" type="Label" parent="UI/HUDLeft/HealthBarContainer" unique_id=1073398942]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -252.0
+offset_top = -17.0
+offset_right = -194.0
+offset_bottom = 11.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 18
+text = "100"
+horizontal_alignment = 2
+
+[node name="ArmorBarContainer" type="Control" parent="UI/HUDLeft" unique_id=1010107]
+custom_minimum_size = Vector2(340, 52)
+layout_mode = 2
+
+[node name="ArmorBar" type="TextureProgressBar" parent="UI/HUDLeft/ArmorBarContainer" unique_id=1010104]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 58.0
+offset_top = 11.0
+offset_right = -70.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 2
+value = 50.0
+nine_patch_stretch = true
+texture_under = ExtResource("7_barbg")
+texture_progress = ExtResource("6_apfill")
+
+[node name="ArmorFrame" type="TextureRect" parent="UI/HUDLeft/ArmorBarContainer" unique_id=1010108]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("5_apframe")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ArmorLabel" type="Label" parent="UI/HUDLeft/ArmorBarContainer" unique_id=2097227761]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -256.0
+offset_top = -17.0
+offset_right = -198.0
+offset_bottom = 11.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 18
+text = "50"
+horizontal_alignment = 2
+
+[node name="HUDRight" type="Control" parent="UI" unique_id=245207343]
+layout_mode = 3
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -260.0
+offset_top = -105.0
+offset_right = -25.0
+offset_bottom = -20.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="AmmoCard" type="TextureRect" parent="UI/HUDRight" unique_id=245207344]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("9_ammocard")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="AmmoLabel" type="Label" parent="UI/HUDRight" unique_id=1651352194]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 7.5
+offset_top = -14.5
+offset_right = 68.5
+offset_bottom = 12.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.1, 0.08, 0.06, 1)
+theme_override_font_sizes/font_size = 22
+text = "30 / 120"
+label_settings = SubResource("LabelSettings_h17s1")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StyleMeter" type="VBoxContainer" parent="UI" unique_id=188899901]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -220.0
+offset_top = 35.0
+offset_right = -35.0
+offset_bottom = 125.0
+grow_horizontal = 0
+theme_override_constants/separation = 2
+
+[node name="StyleRank" type="Label" parent="UI/StyleMeter" unique_id=188899902]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 28
+text = "D - DESTRUCTION"
+horizontal_alignment = 2
+
+[node name="StyleBar" type="ProgressBar" parent="UI/StyleMeter" unique_id=188899903]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+show_percentage = false
+
+[node name="BerserkIndicator" type="Label" parent="UI" unique_id=188899904]
+visible = false
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -180.0
+offset_top = 65.0
+offset_right = 180.0
+offset_bottom = 100.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 0.1, 0.15, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 24
+text = "[ BERSERK AKTİF: 2X HASAR! ]"
+horizontal_alignment = 1
+
+[node name="DeathScreen" type="Control" parent="UI" unique_id=833702486]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Bg" type="ColorRect" parent="UI/DeathScreen" unique_id=1491665321]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.2, 0, 0, 0.65)
+
+[node name="DeadLabel" type="Label" parent="UI/DeathScreen" unique_id=679938727]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -220.0
+offset_top = -40.0
+offset_right = 220.0
+offset_bottom = 40.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.2, 0.2, 1)
+theme_override_font_sizes/font_size = 38
+text = "ÖLDÜN
+Yeniden başlamak için R'ye bas"
+horizontal_alignment = 1
+
+[node name="VictoryScreen" type="Control" parent="UI" unique_id=833702499]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Bg" type="ColorRect" parent="UI/VictoryScreen" unique_id=833702500]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.04, 0.07, 0.12, 0.85)
+
+[node name="VictoryTitle" type="Label" parent="UI/VictoryScreen" unique_id=833702501]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -160.0
+offset_right = 400.0
+offset_bottom = -90.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 42
+text = "BÖLÜM 1: KAĞIT CEHENNEMİ"
+horizontal_alignment = 1
+
+[node name="VictorySubtitle" type="Label" parent="UI/VictoryScreen" unique_id=833702502]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -95.0
+offset_right = 300.0
+offset_bottom = -60.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.3, 1, 0.5, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 22
+text = "BAŞARIYLA TAMAMLANDI!"
+horizontal_alignment = 1
+
+[node name="VictoryStats" type="Label" parent="UI/VictoryScreen" unique_id=833702503]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -40.0
+offset_right = 300.0
+offset_bottom = 85.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 24
+text = "GEÇEN SÜRE: 00:00
+DÜŞMANLAR: 0 / 0
+STİL DERECESİ: S (ULTRAKILL)"
+horizontal_alignment = 1
+
+[node name="RestartHint" type="Label" parent="UI/VictoryScreen" unique_id=833702504]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = 110.0
+offset_right = 300.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
+theme_override_font_sizes/font_size = 20
+text = "[R] TEKRAR OYNA  |  [ESC] İMLEÇ"
+horizontal_alignment = 1

@@ -1,0 +1,38 @@
+[gd_scene format=3 uid="uid://c813jyueop27q"]
+
+[ext_resource type="Script" uid="uid://nq4odxvermuh" path="res://scenes/pickups/pickup.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://cop2q74vlrgxc" path="res://assets/Pickups/ammo.png" id="2_lty2n"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_pickup"]
+radius = 0.65
+
+[node name="AmmoPickup" type="Area3D" unique_id=1789036600 groups=["pickup"]]
+collision_layer = 16
+collision_mask = 2
+script = ExtResource("1_script")
+pickup_type = 2
+amount = 30
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=257055925]
+shape = SubResource("SphereShape3D_pickup")
+
+[node name="Sprite3D" type="Sprite3D" parent="." unique_id=840249095]
+transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, 0, 0)
+texture_filter = 0
+texture = ExtResource("2_lty2n")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="." unique_id=82015155]
+light_color = Color(1, 0.9, 0.2, 1)
+light_energy = 1.2
+omni_range = 2.5
+
+[node name="CountLabel" type="Label3D" parent="." unique_id=987654321]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.28, 0.59145796, 0)
+visible = false
+billboard = 2
+double_sided = false
+no_depth_test = true
+modulate = Color(1, 0.9, 0.2, 1)
+text = "x2"
+font_size = 42
+outline_size = 8

@@ -1,0 +1,31 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://nq4odxvermuh" path="res://scenes/pickups/pickup.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://dpx8q2q93cskm" path="res://assets/Weapons/w_pistol.png" id="2_pistol"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_pickup"]
+radius = 0.8
+
+[node name="WeaponPickupPistol" type="Area3D" groups=["pickup"]]
+collision_layer = 16
+collision_mask = 2
+script = ExtResource("1_script")
+pickup_type = 3
+is_static_world_item = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+shape = SubResource("SphereShape3D_pickup")
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0.45, 0)
+billboard = 2
+alpha_cut = 1
+texture_filter = 0
+texture = ExtResource("2_pistol")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+light_color = Color(0.4, 0.8, 1, 1)
+light_energy = 2.0
+omni_range = 3.5

@@ -1,0 +1,31 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://t6y234hu63sy" path="res://scenes/enemy/enemy.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://b6vdof64m143q" path="res://assets/Entities/e_g_03.png" id="2_texture"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_eg03"]
+radius = 0.65
+height = 2.4
+
+[node name="EnemyGround03" type="CharacterBody3D" groups=["enemy"]]
+collision_layer = 4
+collision_mask = 7
+script = ExtResource("1_script")
+walk_style = 0
+max_health = 130.0
+move_speed = 4.8
+attack_damage = 25.0
+attack_cooldown = 1.6
+tilt_amount = 12.0
+bounce_amount = 0.12
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+shape = SubResource("CapsuleShape3D_eg03")
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+transform = Transform3D(1.25, 0, 0, 0, 1.25, 0, 0, 0, 1.25, 0, 1.2, 0)
+pixel_size = 0.0075
+billboard = 2
+texture_filter = 0
+texture = ExtResource("2_texture")
